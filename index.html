@@ -15,7 +15,12 @@
             var option = document.createElement("option");
             option.value = r.code;
             option.innerHTML = r.name;
+
             select.appendChild(option);
+            option.addEventListener("mousedown", function(e){
+                select.selectedIndex = e.target.index;
+                target.focus();
+            });
         }
 
 
@@ -34,6 +39,10 @@
             target.selectionEnd = target.value.length;
 
         }
+
+        select.addEventListener("click", function(e){
+            debugger;
+        });
 
         target.addEventListener("keydown", function (e) {
             console.log('keydown', e.keyCode, e, this);
