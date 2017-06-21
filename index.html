@@ -4,6 +4,8 @@
 
     function autoComplete(target, data) {
 
+        var previous = target.previousElementSibling;
+
         var select = document.createElement("select");
         select.style.display = 'none';
         var quantity = 0;
@@ -16,7 +18,9 @@
             select.appendChild(option);
         }
 
-        function setValue(){
+
+        function setValue() {
+
             if (select.selectedOptions.length < 1) {
                 return;
             }
@@ -32,7 +36,8 @@
         }
 
         target.addEventListener("keydown", function (e) {
-            console.log(e.keyCode);
+            console.log('keydown', e.keyCode, e, this);
+
 
             if (40 == e.keyCode || 38 == e.keyCode) {
 
@@ -82,6 +87,8 @@
 
         target.addEventListener("keyup", function (e) {
 
+                console.log("keyup", e.keyCode, e, this);
+
                 if (e.keyCode == 38 || e.keyCode == 40 || e.keyCode == 13) {
                     return;
                 }
@@ -130,39 +137,45 @@
 
             this.selectionStart = 0;
             this.selectionEnd = this.value.length;
-            select.style.display = 'blur';
+            select.style.display = 'block';
 
         });
 
         target.addEventListener("blur", function (e) {
             setValue();
-            select.style.display = 'none';
+            if (e.relatedTarget == select) {
+                previous.focus();
+                e.preventDefault();
+                return true;
+            }
         });
+
 
         select.style.position = 'absolute';
         select.style.left = input.offsetLeft + 'px';
         select.style.top = (input.offsetTop + input.offsetHeight) + 'px';
 
-        input.parentElement.insertBefore(select, input.nextSibling);
+
+        input.parentElement.insertBefore(select, input);
 
         select.scrollIntoView(true);
     }
 
     var data = [
-        {"code": "111", "name": "Red Apples (111)"},
-        {"code": "222", "name": "Ripe Oranges (222)"},
-        {"code": "333", "name": "Green Pears (333)"},
-        {"code": "444", "name": "Yellow Bananas (444)"}
+        {"code": "101", "name": "Red Apples (101)"},
+        {"code": "102", "name": "Ripe Oranges (102)"},
+        {"code": "123", "name": "Green Pears (123)"},
+        {"code": "104", "name": "Yellow Bananas (104)"}
     ];
 
     var input = document.createElement("input");
     document.body.appendChild(input);
+    input.focus();
 
     var input = document.createElement("input");
     document.body.appendChild(input);
 
     autoComplete(input, data);
-    input.focus();
 
     var input = document.createElement("input");
     document.body.appendChild(input);
