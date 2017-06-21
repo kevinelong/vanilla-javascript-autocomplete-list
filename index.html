@@ -19,7 +19,8 @@
             select.appendChild(option);
             option.addEventListener("mousedown", function(e){
                 select.selectedIndex = e.target.index;
-                target.focus();
+                setValue();
+                e.preventDefault();
             });
         }
 
@@ -39,10 +40,6 @@
             target.selectionEnd = target.value.length;
 
         }
-
-        select.addEventListener("click", function(e){
-            debugger;
-        });
 
         target.addEventListener("keydown", function (e) {
             console.log('keydown', e.keyCode, e, this);
@@ -152,6 +149,7 @@
 
         target.addEventListener("blur", function (e) {
             setValue();
+
             if (e.relatedTarget == select) {
                 previous.focus();
                 e.preventDefault();
