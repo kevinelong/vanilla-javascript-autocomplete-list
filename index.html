@@ -1,0 +1,166 @@
+<body style="padding-top: 200px;">
+<input>
+<input>
+</body>
+<script>
+
+    function autoComplete(target, data) {
+
+        var select = document.createElement("select");
+        select.style.display = 'none';
+        var quantity = 0;
+
+        for (var i = 0; i < data.length; i++) {
+            var r = data[i];
+            var option = document.createElement("option");
+            option.value = r.code;
+            option.innerHTML = r.name;
+            select.appendChild(option);
+        }
+
+        function setValue(input){
+            if (select.selectedOptions.length < 1) {
+                return;
+            }
+
+            var first = select.selectedOptions[0];
+            target.dataset.code = select.value;
+            target.value = first.innerHTML;
+            select.style.display = 'none';
+
+            input.selectionStart = 0;
+            input.selectionEnd = this.value.length;
+
+        }
+
+        target.addEventListener("keydown", function (e) {
+            console.log(e.keyCode);
+
+            if (40 == e.keyCode || 38 == e.keyCode) {
+
+                e.preventDefault();
+
+                if (select.selectedIndex == -1 || quantity == 1) {
+                    return false;
+                }
+
+                var found = false;
+
+                if (40 == e.keyCode) {
+
+                    while (select.selectedIndex < (select.childElementCount - 1) && !found) {
+                        select.selectedIndex++;
+                        if (select.selectedOptions[0].style.display != 'none') {
+                            found = true;
+                        }
+                    }
+
+                } else if (38 == e.keyCode) {
+
+                    while (select.selectedIndex > 0 && !found) {
+                        select.selectedIndex--;
+                        if (select.selectedOptions[0].style.display != 'none') {
+                            found = true;
+                        }
+                    }
+                }
+
+                return false;
+
+            } else if (13 == e.keyCode) {
+
+                if (select.selectedOptions.length < 1) {
+                    return;
+                }
+
+                setValue(input);
+                return false;
+            }
+        });
+
+
+        target.addEventListener("keyup", function (e) {
+
+                if (e.keyCode == 38 || e.keyCode == 40 || e.keyCode == 13) {
+                    return;
+                }
+
+                select.style.display = 'block';
+                var isFirst = true;
+                var first = undefined;
+                quantity = 0;
+
+                for (var i = 0; i < select.childElementCount; i++) {
+                    var item = select.children[i];
+
+                    if (item.innerHTML.toUpperCase().indexOf(target.value.toUpperCase()) != -1) {
+
+                        if (isFirst) {
+                            console.log('first', i);
+                            select.selectedIndex = i;
+                            item.selected = true;
+                            isFirst = false;
+                            first = item;
+                        }
+
+
+                        item.style.display = 'block';
+                        quantity++;
+
+                    } else {
+
+                        item.style.display = 'none';
+
+                    }
+                }
+
+                if (quantity > 0) {
+                    select.style.display = 'block';
+                    select.setAttribute('size', quantity.toString());
+                } else {
+                    select.style.display = 'none';
+                }
+
+            }
+        );
+
+
+        target.addEventListener("focus", function (e) {
+
+            this.selectionStart = 0;
+            this.selectionEnd = this.value.length;
+            select.style.display = 'blur';
+
+        });
+
+        target.addEventListener("blur", function (e) {
+            setValue(this);
+            this.selectionStart = 0;
+            this.selectionEnd = this.value.length;
+            select.style.display = 'none';
+
+        });
+
+        select.style.position = 'absolute';
+        select.style.left = input.offsetLeft + 'px';
+        select.style.top = (input.offsetTop + input.offsetHeight) + 'px';
+
+        input.parentElement.insertBefore(select, input.nextSibling);
+
+        select.scrollIntoView(true);
+    }
+
+    var data = [
+        {"code": "111", "name": "Red Apples (111)"},
+        {"code": "222", "name": "Ripe Oranges (222)"},
+        {"code": "333", "name": "Green Pears (333)"},
+        {"code": "444", "name": "Yellow Bananas (444)"}
+    ];
+
+    var input = document.createElement("input");
+    document.body.appendChild(input);
+
+    autoComplete(input, data);
+    input.focus();
+
+</script>
