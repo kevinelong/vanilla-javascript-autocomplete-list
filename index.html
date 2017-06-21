@@ -1,6 +1,4 @@
 <body style="padding-top: 200px;">
-<input>
-<input>
 </body>
 <script>
 
@@ -18,7 +16,7 @@
             select.appendChild(option);
         }
 
-        function setValue(input){
+        function setValue(){
             if (select.selectedOptions.length < 1) {
                 return;
             }
@@ -28,8 +26,8 @@
             target.value = first.innerHTML;
             select.style.display = 'none';
 
-            input.selectionStart = 0;
-            input.selectionEnd = input.value.length;
+            target.selectionStart = 0;
+            target.selectionEnd = target.value.length;
 
         }
 
@@ -47,20 +45,23 @@
                 var found = false;
 
                 if (40 == e.keyCode) {
-
-                    while (select.selectedIndex < (select.childElementCount - 1) && !found) {
-                        select.selectedIndex++;
-                        if (select.selectedOptions[0].style.display != 'none') {
+                    var i = select.selectedIndex;
+                    while (i < (select.options.length - 1) && !found) {
+                        i++;
+                        if (select.options[i].style.display != 'none') {
                             found = true;
+                            select.selectedIndex = i;
                         }
+
                     }
 
                 } else if (38 == e.keyCode) {
-
-                    while (select.selectedIndex > 0 && !found) {
-                        select.selectedIndex--;
-                        if (select.selectedOptions[0].style.display != 'none') {
+                    var i = select.selectedIndex;
+                    while (i > 0 && !found) {
+                        i--;
+                        if (select.options[i].style.display != 'none') {
                             found = true;
+                            select.selectedIndex = i;
                         }
                     }
                 }
@@ -73,7 +74,7 @@
                     return;
                 }
 
-                setValue(input);
+                setValue();
                 return false;
             }
         });
@@ -134,11 +135,8 @@
         });
 
         target.addEventListener("blur", function (e) {
-            setValue(this);
-            this.selectionStart = 0;
-            this.selectionEnd = this.value.length;
+            setValue();
             select.style.display = 'none';
-
         });
 
         select.style.position = 'absolute';
@@ -160,7 +158,13 @@
     var input = document.createElement("input");
     document.body.appendChild(input);
 
+    var input = document.createElement("input");
+    document.body.appendChild(input);
+
     autoComplete(input, data);
     input.focus();
+
+    var input = document.createElement("input");
+    document.body.appendChild(input);
 
 </script>
